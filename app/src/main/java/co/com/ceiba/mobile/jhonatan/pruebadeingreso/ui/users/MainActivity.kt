@@ -1,11 +1,11 @@
 package co.com.ceiba.mobile.jhonatan.pruebadeingreso.ui.users
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
-import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -15,11 +15,11 @@ import co.com.ceiba.mobile.jhonatan.pruebadeingreso.infrastructure.local.AppData
 import co.com.ceiba.mobile.jhonatan.pruebadeingreso.infrastructure.remote.UserRemoteDataSource
 import co.com.ceiba.mobile.jhonatan.pruebadeingreso.infrastructure.remote.UserService
 import co.com.ceiba.mobile.jhonatan.pruebadeingreso.infrastructure.repository.UserRepository
+import co.com.ceiba.mobile.jhonatan.pruebadeingreso.ui.posts.PostActivity
 import co.com.ceiba.mobile.jhonatan.pruebadeingreso.util.Resource
-import co.com.ceiba.mobile.pruebadeingreso.R
 import co.com.ceiba.mobile.pruebadeingreso.databinding.ActivityMainBinding
 
-class MainActivity : AppCompatActivity() {
+internal class MainActivity : AppCompatActivity(), UserAdapter.BtnViewPostItemListener {
 
     private lateinit var binding: ActivityMainBinding
     private lateinit var viewModel: UserViewModel
@@ -38,7 +38,7 @@ class MainActivity : AppCompatActivity() {
     private fun setupViewModel(): UserViewModel {
         val userService = UserService.getInstance()
         val userDataSource = UserRemoteDataSource(userService)
-        val database = AppDatabase.getDatabase(this)
+        val database = AppDatabase.getDatabaseUser(this)
         val userDao = database.userDao()
         val repository = UserRepository(userDataSource, userDao)
 
@@ -47,7 +47,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setupRecyclerView() {
-        adapter = UserAdapter()
+        adapter = UserAdapter(this)
         binding.recyclerViewSearchResults.layoutManager = LinearLayoutManager(this)
         binding.recyclerViewSearchResults.adapter = adapter
     }
@@ -93,23 +93,25 @@ class MainActivity : AppCompatActivity() {
 
     private fun setupObservers() {
         viewModel.users.observe(this, Observer {
-            binding.emptyView.root.visibility = View.GONE
             when (it.status) {
                 Resource.Status.SUCCESS -> {
                     binding.progressBar.visibility = View.GONE
-                    if (it.data.isNullOrEmpty()) {
-                        binding.emptyView.root.visibility = View.VISIBLE
-                    }
-                    else {
+                    if (!it.data.isNullOrEmpty()) {
                         adapter.setItems(ArrayList(it.data.sortedBy { user ->  user.name }))
                     }
                 }
-                Resource.Status.ERROR ->
+                Resource.Status.ERROR -> {
                     Toast.makeText(this, it.message, Toast.LENGTH_SHORT).show()
-
+                }
                 Resource.Status.LOADING ->
                     binding.progressBar.visibility = View.VISIBLE
             }
         })
+    }
+
+    override fun onViewPost(user: User) {
+        val i = Intent(this, PostActivity::class.java)
+        i.putExtra("user", user)
+        startActivity(i)
     }
 }

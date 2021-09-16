@@ -7,7 +7,12 @@ import androidx.recyclerview.widget.RecyclerView
 import co.com.ceiba.mobile.jhonatan.pruebadeingreso.infrastructure.data.User
 import co.com.ceiba.mobile.pruebadeingreso.databinding.UserListItemBinding
 
-internal class UserAdapter : RecyclerView.Adapter<UserViewHolder>() {
+internal class UserAdapter(private val listener: BtnViewPostItemListener) :
+    RecyclerView.Adapter<UserViewHolder>() {
+
+    internal interface BtnViewPostItemListener {
+        fun onViewPost(user: User)
+    }
 
     private val items = ArrayList<User>()
 
@@ -18,16 +23,21 @@ internal class UserAdapter : RecyclerView.Adapter<UserViewHolder>() {
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): UserViewHolder {
-        val binding: UserListItemBinding = UserListItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        return UserViewHolder(binding)
+        val binding: UserListItemBinding =
+            UserListItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        return UserViewHolder(binding, listener)
     }
 
-    override fun onBindViewHolder(holder: UserViewHolder, position: Int) = holder.bindUser(items[position])
+    override fun onBindViewHolder(holder: UserViewHolder, position: Int) =
+        holder.bindUser(items[position])
 
     override fun getItemCount(): Int = items.size
 }
 
-internal class UserViewHolder(private val itemBinding: UserListItemBinding): RecyclerView.ViewHolder(itemBinding.root as View) {
+internal class UserViewHolder(
+    private val itemBinding: UserListItemBinding,
+    private val listener: UserAdapter.BtnViewPostItemListener
+) : RecyclerView.ViewHolder(itemBinding.root as View) {
 
     private lateinit var user: User
 
@@ -37,7 +47,7 @@ internal class UserViewHolder(private val itemBinding: UserListItemBinding): Rec
         itemBinding.email.text = item.email
         itemBinding.phone.text = item.phone
         itemBinding.btnViewPost.setOnClickListener {
-            print("publicaciones")
+            listener.onViewPost(user)
         }
     }
 }

@@ -1,6 +1,5 @@
 package co.com.ceiba.mobile.jhonatan.pruebadeingreso.infrastructure.local
 
-import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
@@ -15,10 +14,13 @@ internal interface UserDao {
     fun getAllUsers() : List<User>
 
     @Query("SELECT * FROM users WHERE id = :id")
-    fun getUser(id: Int) : LiveData<User>
+    fun getUser(id: Int) : User
 
-    /*@Query("SELECT posts FROM users WHERE id = :id")
-    fun getPostsForUser(id: Int) : LiveData<List<Post>>*/
+    @Query("SELECT * FROM posts WHERE userId = :userId")
+    fun getPostsForUser(userId: Int) : List<Post>
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertAllPosts(posts: List<Post>)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAll(users: List<User>)

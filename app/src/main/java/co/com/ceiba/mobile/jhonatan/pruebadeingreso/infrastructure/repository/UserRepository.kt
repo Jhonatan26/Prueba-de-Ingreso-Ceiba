@@ -18,14 +18,8 @@ internal class UserRepository(
     )
 
     fun getPostForUser(userId: Int) = performGetOperation(
-        databaseQuery = { /*localDataSource.getPostsForUser(userId)*/ MutableLiveData<List<Post>>() },
+        databaseQuery = { localDataSource.getPostsForUser(userId) },
         networkCall = { remoteDataSource.getPostForUser(userId) },
-        saveCallResult = {
-            /*val user = localDataSource.getUser(userId)
-            user.value?.let { userIt ->
-                userIt.posts = it
-                localDataSource.insert(userIt)
-            }*/
-        }
+        saveCallResult = { localDataSource.insertAllPosts(it) }
     )
 }
