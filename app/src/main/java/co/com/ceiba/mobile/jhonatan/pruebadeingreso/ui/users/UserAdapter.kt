@@ -37,17 +37,22 @@ internal class UserAdapter(private val listener: BtnViewPostItemListener) :
 internal class UserViewHolder(
     private val itemBinding: UserListItemBinding,
     private val listener: UserAdapter.BtnViewPostItemListener
-) : RecyclerView.ViewHolder(itemBinding.root as View) {
+) : RecyclerView.ViewHolder(itemBinding.root as View), View.OnClickListener {
 
     private lateinit var user: User
+
+    init {
+        itemBinding.root.setOnClickListener(this)
+    }
 
     internal fun bindUser(item: User) {
         this.user = item
         itemBinding.name.text = item.name
         itemBinding.email.text = item.email
         itemBinding.phone.text = item.phone
-        itemBinding.btnViewPost.setOnClickListener {
-            listener.onViewPost(user)
-        }
+    }
+
+    override fun onClick(p0: View?) {
+        listener.onViewPost(user)
     }
 }
