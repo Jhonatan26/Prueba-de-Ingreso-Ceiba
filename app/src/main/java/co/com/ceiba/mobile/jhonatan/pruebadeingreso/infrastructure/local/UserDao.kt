@@ -17,8 +17,8 @@ internal interface UserDao {
     @Query("SELECT * FROM users WHERE id = :id")
     fun getUser(id: Int) : LiveData<User>
 
-    @Query("SELECT posts FROM users WHERE id = :id")
-    fun getPostsForUser(id: Int) : LiveData<List<Post>>
+    /*@Query("SELECT posts FROM users WHERE id = :id")
+    fun getPostsForUser(id: Int) : LiveData<List<Post>>*/
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAll(users: List<User>)

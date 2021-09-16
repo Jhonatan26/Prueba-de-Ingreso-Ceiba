@@ -36,6 +36,15 @@
             android:layout_height="match_parent"
             android:layout_below="@id/textInputLayoutSearch"/>
 
+        <ProgressBar
+            android:id="@+id/progress_bar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:indeterminate="true"
+            android:visibility="gone"/>
+
     </RelativeLayout>
 
 </LinearLayout>

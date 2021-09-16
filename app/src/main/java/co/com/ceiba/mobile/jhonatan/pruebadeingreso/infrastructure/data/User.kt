@@ -9,6 +9,5 @@ internal data class User(
     val id: Int,
     val name: String,
     val email: String,
-    val phone: String,
-    var posts: List<Post>?
+    val phone: String
 )
