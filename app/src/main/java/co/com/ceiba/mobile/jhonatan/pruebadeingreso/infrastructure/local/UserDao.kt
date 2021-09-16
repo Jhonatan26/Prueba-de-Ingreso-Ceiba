@@ -12,7 +12,7 @@ import co.com.ceiba.mobile.jhonatan.pruebadeingreso.infrastructure.data.User
 internal interface UserDao {
 
     @Query("SELECT * FROM users")
-    fun getAllUsers() : LiveData<List<User>>
+    fun getAllUsers() : List<User>
 
     @Query("SELECT * FROM users WHERE id = :id")
     fun getUser(id: Int) : LiveData<User>
