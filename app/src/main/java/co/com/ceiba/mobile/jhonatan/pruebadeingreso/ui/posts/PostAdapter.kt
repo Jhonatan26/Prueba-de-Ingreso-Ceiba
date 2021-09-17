@@ -18,16 +18,19 @@ internal class PostAdapter : RecyclerView.Adapter<PostViewHolder>() {
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PostViewHolder {
-        val binding: PostListItemBinding = PostListItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        val binding: PostListItemBinding =
+            PostListItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return PostViewHolder(binding)
     }
 
-    override fun onBindViewHolder(holder: PostViewHolder, position: Int) = holder.bindUser(items[position])
+    override fun onBindViewHolder(holder: PostViewHolder, position: Int) =
+        holder.bindUser(items[position])
 
     override fun getItemCount(): Int = items.size
 }
 
-internal class PostViewHolder(private val itemBinding: PostListItemBinding): RecyclerView.ViewHolder(itemBinding.root as View) {
+internal class PostViewHolder(private val itemBinding: PostListItemBinding) :
+    RecyclerView.ViewHolder(itemBinding.root as View) {
 
     private lateinit var post: Post
 

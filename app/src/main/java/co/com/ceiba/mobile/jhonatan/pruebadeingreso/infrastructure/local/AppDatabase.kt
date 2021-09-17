@@ -13,14 +13,36 @@ internal abstract class AppDatabase : RoomDatabase() {
     abstract fun userDao(): UserDao
 
     companion object {
-        @Volatile private var instance: AppDatabase? = null
+        @Volatile
+        private var instance: AppDatabase? = null
 
+        /***
+         * Bases de Datos de User
+         */
         fun getDatabaseUser(context: Context): AppDatabase =
-            instance ?: synchronized(this) { instance ?: buildDatabase(context, "users").also { instance = it } }
+            instance ?: synchronized(this) {
+                instance ?: buildDatabase(
+                    context,
+                    "users"
+                ).also { instance = it }
+            }
 
+        /***
+         * Bases de Datos de Post
+         */
         fun getDatabasePost(context: Context): AppDatabase =
-            instance ?: synchronized(this) { instance ?: buildDatabase(context, "posts").also { instance = it } }
+            instance ?: synchronized(this) {
+                instance ?: buildDatabase(
+                    context,
+                    "posts"
+                ).also { instance = it }
+            }
 
+        /***
+         * Build de la Database
+         * [appContext] -> Contexto de aplicaciones
+         * [name] -> Nombre de la vases de Datos
+         */
         private fun buildDatabase(appContext: Context, name: String) =
             Room.databaseBuilder(appContext, AppDatabase::class.java, name)
                 .fallbackToDestructiveMigration()

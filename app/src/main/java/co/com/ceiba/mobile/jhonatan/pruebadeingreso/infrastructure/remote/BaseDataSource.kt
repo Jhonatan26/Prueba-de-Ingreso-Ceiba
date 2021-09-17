@@ -5,6 +5,9 @@ import co.com.ceiba.mobile.jhonatan.pruebadeingreso.util.Resource
 
 abstract class BaseDataSource {
 
+    /***
+     * Unificar la Respuesta en un solo Objeto.
+     */
     protected suspend fun <T> getResult(call: suspend () -> Response<T>): Resource<T> {
         try {
             val response = call()

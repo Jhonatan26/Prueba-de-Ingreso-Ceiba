@@ -1,8 +1,5 @@
 package co.com.ceiba.mobile.jhonatan.pruebadeingreso.infrastructure.repository
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import co.com.ceiba.mobile.jhonatan.pruebadeingreso.infrastructure.data.Post
 import co.com.ceiba.mobile.jhonatan.pruebadeingreso.infrastructure.local.UserDao
 import co.com.ceiba.mobile.jhonatan.pruebadeingreso.infrastructure.remote.UserRemoteDataSource
 import co.com.ceiba.mobile.jhonatan.pruebadeingreso.util.performGetOperation

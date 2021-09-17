@@ -12,6 +12,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import co.com.ceiba.mobile.jhonatan.pruebadeingreso.infrastructure.data.User
 import co.com.ceiba.mobile.jhonatan.pruebadeingreso.infrastructure.local.AppDatabase
+import co.com.ceiba.mobile.jhonatan.pruebadeingreso.infrastructure.local.UserDao
 import co.com.ceiba.mobile.jhonatan.pruebadeingreso.infrastructure.remote.UserRemoteDataSource
 import co.com.ceiba.mobile.jhonatan.pruebadeingreso.infrastructure.remote.UserService
 import co.com.ceiba.mobile.jhonatan.pruebadeingreso.infrastructure.repository.UserRepository
@@ -19,10 +20,24 @@ import co.com.ceiba.mobile.jhonatan.pruebadeingreso.ui.posts.PostActivity
 import co.com.ceiba.mobile.jhonatan.pruebadeingreso.util.Resource
 import co.com.ceiba.mobile.pruebadeingreso.databinding.ActivityMainBinding
 
+/***
+ * Activity de Users - Primera Pantalla
+ */
 internal class MainActivity : AppCompatActivity(), UserAdapter.BtnViewPostItemListener {
 
+    /***
+     * Objeto del Activity Main Layout(baseproject)
+     */
     private lateinit var binding: ActivityMainBinding
+
+    /***
+     * ViewModel de Users
+     */
     private lateinit var viewModel: UserViewModel
+
+    /***
+     * adapter para el Recycler View de Users
+     */
     private lateinit var adapter: UserAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -35,6 +50,11 @@ internal class MainActivity : AppCompatActivity(), UserAdapter.BtnViewPostItemLi
         setupFilter()
     }
 
+    /***
+     * Instancia de Dependencias: [UserRepository], [UserDao], [AppDatabase],
+     * [UserRemoteDataSource], [UserService].
+     * Inicializacion del [UserViewModel]
+     */
     private fun setupViewModel(): UserViewModel {
         val userService = UserService.getInstance()
         val userDataSource = UserRemoteDataSource(userService)
@@ -46,20 +66,31 @@ internal class MainActivity : AppCompatActivity(), UserAdapter.BtnViewPostItemLi
             .get(UserViewModel::class.java)
     }
 
+    /***
+     * Setup del [RecyclerView]
+     * Instancia del [UserAdapter] con el Listener [onViewPost]
+     */
     private fun setupRecyclerView() {
         adapter = UserAdapter(this)
         binding.recyclerViewSearchResults.layoutManager = LinearLayoutManager(this)
         binding.recyclerViewSearchResults.adapter = adapter
     }
 
+    /***
+     * Listener para el filter, tras cada escritura del [binding.editTextSearch]
+     */
     private fun setupFilter() {
-        binding.editTextSearch.addTextChangedListener(object: TextWatcher {
+        binding.editTextSearch.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
             }
 
             override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
             }
 
+            /***
+             * Tras cada cambio del editText, se vuelve invisible el mensaje ListEmpty, y se
+             * llama a la funcion [filter]
+             */
             override fun afterTextChanged(p0: Editable?) {
                 binding.emptyView.root.visibility = View.GONE
                 filter(p0.toString())
@@ -68,6 +99,12 @@ internal class MainActivity : AppCompatActivity(), UserAdapter.BtnViewPostItemLi
         })
     }
 
+    /***
+     * Logica para realizar el filtrado por Nombre,
+     * 1era lista para los textos iniciales
+     * 2da lista para el resto que contenga ese texto,
+     * cada lista se ordena de forma alfabetica
+     */
     private fun filter(text: String) {
         val filteredListEquals = ArrayList<User>()
         val filteredListRest = ArrayList<User>()
@@ -91,13 +128,16 @@ internal class MainActivity : AppCompatActivity(), UserAdapter.BtnViewPostItemLi
         adapter.setItems(filteredList)
     }
 
+    /***
+     * Setup de los observadores del viewModel
+     */
     private fun setupObservers() {
         viewModel.users.observe(this, Observer {
             when (it.status) {
                 Resource.Status.SUCCESS -> {
                     binding.progressBar.visibility = View.GONE
                     if (!it.data.isNullOrEmpty()) {
-                        adapter.setItems(ArrayList(it.data.sortedBy { user ->  user.name }))
+                        adapter.setItems(ArrayList(it.data.sortedBy { user -> user.name }))
                     }
                 }
                 Resource.Status.ERROR -> {
@@ -109,6 +149,9 @@ internal class MainActivity : AppCompatActivity(), UserAdapter.BtnViewPostItemLi
         })
     }
 
+    /***
+     * Listener para los items de los usuarios al hacer onClick
+     */
     override fun onViewPost(user: User) {
         val i = Intent(this, PostActivity::class.java)
         i.putExtra("user", user)

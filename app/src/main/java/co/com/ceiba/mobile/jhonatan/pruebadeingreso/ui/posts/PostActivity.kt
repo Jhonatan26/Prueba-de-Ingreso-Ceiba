@@ -9,13 +9,14 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import co.com.ceiba.mobile.jhonatan.pruebadeingreso.infrastructure.data.User
 import co.com.ceiba.mobile.jhonatan.pruebadeingreso.infrastructure.local.AppDatabase
+import co.com.ceiba.mobile.jhonatan.pruebadeingreso.infrastructure.local.UserDao
 import co.com.ceiba.mobile.jhonatan.pruebadeingreso.infrastructure.remote.UserRemoteDataSource
 import co.com.ceiba.mobile.jhonatan.pruebadeingreso.infrastructure.remote.UserService
 import co.com.ceiba.mobile.jhonatan.pruebadeingreso.infrastructure.repository.UserRepository
 import co.com.ceiba.mobile.jhonatan.pruebadeingreso.util.Resource
 import co.com.ceiba.mobile.pruebadeingreso.databinding.ActivityPostBinding
 
-internal class PostActivity : AppCompatActivity(){
+internal class PostActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityPostBinding
     private lateinit var viewModel: PostViewModel
@@ -30,6 +31,11 @@ internal class PostActivity : AppCompatActivity(){
         setupObservers()
     }
 
+    /***
+     * Instancia de Dependencias: [UserRepository], [UserDao], [AppDatabase],
+     * [UserRemoteDataSource], [UserService].
+     * Inicializacion del [PostViewModel]
+     */
     private fun setupViewModel(): PostViewModel {
         val userService = UserService.getInstance()
         val userDataSource = UserRemoteDataSource(userService)
@@ -45,23 +51,26 @@ internal class PostActivity : AppCompatActivity(){
             .get(PostViewModel::class.java)
     }
 
+    /***
+     * Setup del [RecyclerView]
+     * Instancia del [PostAdapter]
+     */
     private fun setupRecyclerView() {
         adapter = PostAdapter()
         binding.recyclerViewPostsResults.layoutManager = LinearLayoutManager(this)
         binding.recyclerViewPostsResults.adapter = adapter
     }
 
+    /***
+     * Setup de los observadores del viewModel
+     */
     private fun setupObservers() {
         viewModel.posts.observe(this, Observer {
-            binding.emptyView.root.visibility = View.GONE
             when (it.status) {
                 Resource.Status.SUCCESS -> {
                     binding.progressBar.visibility = View.GONE
-                    if (it.data.isNullOrEmpty()) {
-                        binding.emptyView.root.visibility = View.VISIBLE
-                    }
-                    else {
-                        adapter.setItems(ArrayList(it.data.sortedBy { post ->  post.title }))
+                    if (!it.data.isNullOrEmpty()) {
+                        adapter.setItems(ArrayList(it.data.sortedBy { post -> post.title }))
                     }
                 }
                 Resource.Status.ERROR ->

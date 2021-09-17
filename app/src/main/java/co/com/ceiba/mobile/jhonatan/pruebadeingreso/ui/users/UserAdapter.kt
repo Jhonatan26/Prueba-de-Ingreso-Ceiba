@@ -7,9 +7,15 @@ import androidx.recyclerview.widget.RecyclerView
 import co.com.ceiba.mobile.jhonatan.pruebadeingreso.infrastructure.data.User
 import co.com.ceiba.mobile.pruebadeingreso.databinding.UserListItemBinding
 
+/***
+ * Adapter para el Recycler View
+ */
 internal class UserAdapter(private val listener: BtnViewPostItemListener) :
     RecyclerView.Adapter<UserViewHolder>() {
 
+    /***
+     * Declaracion del Listener por medio de la interfaz
+     */
     internal interface BtnViewPostItemListener {
         fun onViewPost(user: User)
     }
@@ -50,6 +56,7 @@ internal class UserViewHolder(
         itemBinding.name.text = item.name
         itemBinding.email.text = item.email
         itemBinding.phone.text = item.phone
+        itemBinding.btnViewPost.setOnClickListener(this)
     }
 
     override fun onClick(p0: View?) {
